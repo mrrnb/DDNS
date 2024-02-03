@@ -56,14 +56,22 @@ def _open(url, reg):
         return compile(reg).search(res).group()
     except Exception as e:
         error(e)
+        error("failed to request %s", url)
 
 
-def public_v4(url="https://myip4.ipip.net", reg=IPV4_REG):  # 公网IPV4地址
-    return _open(url, reg)
-
+def public_v4(url="https://cip.cc", reg=IPV4_REG):  # 公网IPV4地址
+    res = _open(url, reg)
+    if not res:
+        url = "https://cip.cc/"
+        res = _open(url, reg)
+    return res
 
 def public_v6(url="https://myip6.ipip.net", reg=IPV6_REG):  # 公网IPV6地址
-    return _open(url, reg)
+    res = _open(url, reg)
+    if not res:
+        url = "https://cip.cc/"
+        res = _open(url, reg)
+    return res
 
 
 def _ip_regex_match(parrent_regex, match_regex):

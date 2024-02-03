@@ -128,16 +128,17 @@ def main():
     dns.Config.ID = get_config('id')
     dns.Config.TOKEN = get_config('token')
     dns.Config.TTL = get_config('ttl')
+    log_level = get_config('log_level', 'info')
     if get_config('debug'):
         ip.DEBUG = get_config('debug')
-        basicConfig(
-            level=DEBUG,
-            format='%(asctime)s <%(module)s.%(funcName)s> %(lineno)d@%(pathname)s \n[%(levelname)s] %(message)s')
-        print("DDNS[", __version__, "] run:", os_name, sys.platform)
-        if get_config("config"):
-            print("Configuration was loaded from <==",
-                  path.abspath(get_config("config")))
-        print("=" * 25, ctime(), "=" * 25, sep=' ')
+    basicConfig(
+        level=log_level.upper() if log_level else DEBUG,
+        format='%(asctime)s <%(module)s.%(funcName)s> %(lineno)d@%(pathname)s \n[%(levelname)s] %(message)s')
+    # print("DDNS[", __version__, "] run:", os_name, sys.platform)
+    # if get_config("config"):
+    #     print("Configuration was loaded from <==",
+    #           path.abspath(get_config("config")))
+    print("=" * 25, ctime(), "=" * 25, sep=' ')
 
     proxy = get_config('proxy') or 'DIRECT'
     proxy_list = proxy if isinstance(
@@ -148,7 +149,7 @@ def main():
         cache = cache_config
     elif cache_config is True:
         cache = Cache(path.join(gettempdir(), 'ddns.cache'))
-        print(gettempdir())
+        # print(gettempdir())
     else:
         cache = Cache(cache_config)
 
