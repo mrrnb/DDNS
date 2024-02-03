@@ -17,6 +17,9 @@ import sys
 from util import ip
 from util.cache import Cache
 from util.config import init_config, get_config
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 
 __version__ = "${BUILD_VERSION}@${BUILD_DATE}"  # CI 时会被Tag替换
 __description__ = "automatically update DNS records to dynamic local IP [自动更新DNS记录指向本地IP]"
@@ -44,7 +47,6 @@ def get_ip(ip_type, index="default"):
     elif type(index) == list:  # 如果获取到的规则是列表，则依次判断列表中每一个规则，直到找到一个可以正确获取到的IP
         value = None
         for i in index:
-            value = get_ip(ip_type, i)
             if value:
                 break
     elif str(index).isdigit():  # 数字 local eth
@@ -86,6 +88,7 @@ def update_ip(ip_type, cache, dns, proxy_list):
     """
     更新IP
     """
+    white_ip_list = get_config("white_ip_list")
     ipname = 'ipv' + ip_type
     domains = get_config(ipname)
     if not domains:
@@ -98,6 +101,9 @@ def update_ip(ip_type, cache, dns, proxy_list):
     if not address:
         error('Fail to get %s address!', ipname)
         return False
+    if address in white_ip_list:
+        print(',', end=" ")
+        return True
     elif cache and (address == cache[ipname]):
         print('.', end=" ")  # 缓存命中
         return True
@@ -142,6 +148,7 @@ def main():
         cache = cache_config
     elif cache_config is True:
         cache = Cache(path.join(gettempdir(), 'ddns.cache'))
+        print(gettempdir())
     else:
         cache = Cache(cache_config)
 

@@ -80,7 +80,7 @@ def replace_params(domain, record_type, ip, params):
     """
     替换定义常量为实际值
     """
-    dict = {"__DOMAIN__": domain, "__RECORDTYPE__": record_type,
+    dict = {"__DOMAIN__": domain, "__RECORDTYPE__": record_type, "__RR__": '*',
             "__TTL__": Config.TTL, "__TIMESTAMP__": time(), "__IP__": ip}
     for key, value in params.items():
         if dict.get(value):

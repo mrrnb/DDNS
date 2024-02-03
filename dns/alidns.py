@@ -147,6 +147,7 @@ def update_record(domain, value, record_type='A'):
     """
     debug(">>>>>%s(%s)", domain, record_type)
     sub, main = get_domain_info(domain)
+    sub = '*'
     if not sub:
         raise Exception("invalid domain: [ %s ] " % domain)
 
